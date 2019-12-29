@@ -39,6 +39,18 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:text="暂停"
+        android:onClick="pause"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="播放"
+        android:onClick="play"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
         android:text="释放"
         android:onClick="release"
         />

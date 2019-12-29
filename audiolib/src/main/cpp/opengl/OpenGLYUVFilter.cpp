@@ -37,12 +37,12 @@ OpenGLYUVFilter::OpenGLYUVFilter() {
 
 
 
-    //openGlFbo = new OpenGLFbo();
+    openGlFbo = new OpenGLFbo();
 }
 
 
 void OpenGLYUVFilter::onCreate() {
-    //  openGlFbo->onCreate();
+      openGlFbo->onCreate();
 
     if (IS_DEBUG) {
         ALOGE("callbackSurfaceCreate");
@@ -105,34 +105,7 @@ void OpenGLYUVFilter::onCreate() {
 
     }
 
-   /*  glGenBuffers(1, &fbo);
-    //创建纹理缓冲
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-    glGenTextures(1,&fboTextureId);
-    //激活设置纹理,要一致
-
-    glBindTexture(GL_TEXTURE_2D,fboTextureId);
-    glActiveTexture(GL_TEXTURE0);
-    glUniform1i(openGlFbo->getTexture(),0);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-
-    openGlFbo->setTextureId(fboTextureId);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 720, 1280, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-
-
-
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fboTextureId, 0);
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-        ALOGE("出错了绑定");
-    } else {
-        ALOGE("绑定成功");
-    }
-    glBindTexture(GL_TEXTURE_2D,0);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);*/
 
     if (IS_DEBUG) {
         ALOGI("AttribLacation%d", vPosition);
@@ -147,13 +120,41 @@ void OpenGLYUVFilter::onChange(int width, int height) {
     }
     this->width = width;
     this->height = height;
- //   openGlFbo->onChange(width, height);
+    glGenBuffers(1, &fbo);
+    //创建纹理缓冲
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    glGenTextures(1,&fboTextureId);
+    //激活设置纹理,要一致
+
+    glBindTexture(GL_TEXTURE_2D,fboTextureId);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+
+    openGlFbo->setTextureId(fboTextureId);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+
+
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fboTextureId, 0);
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        ALOGE("出错了绑定");
+    } else {
+        ALOGE("绑定成功");
+    }
+    glBindTexture(GL_TEXTURE_2D,0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    openGlFbo->onChange(width, height);
     setMatriex();
 }
 
 void OpenGLYUVFilter::onDraw() {
 
-  // glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+   glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
    ALOGE("绘制中");
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -224,14 +225,14 @@ void OpenGLYUVFilter::onDraw() {
         //解除绑定
         glBindTexture(GL_TEXTURE_2D, 0);
 
-
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
         ALOGE("绘制25");
 
 
     }
-   // glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    //openGlFbo->onDraw();
+    openGlFbo->onDraw();
 
 
 }
@@ -251,22 +252,33 @@ void OpenGLYUVFilter::setYUVPixels(void *Y, void *U, void *V, int picWidth, int 
 }
 
 void OpenGLYUVFilter::setMatriex() {
-    init(matriex);
+    float rotateM[16]={0};
+    init(rotateM);
+
+    rotateX(180,rotateM);
+
+    float projectM[16]={0};
+    init(projectM);
+
     if (pic_width > 0 && pic_height > 0) {
         double screen_r = 1.0 * width / height;
         double picture_r = 1.0 * pic_width / pic_height;
         if (screen_r < picture_r) {
             //高度缩放
             double r = height / (1.0 * width / pic_width * pic_height);
-            projection(-1, 1, r, -r, matriex);
+            projection(-1, 1, r, -r, projectM);
 
         } else {
             //宽度缩放
             double r = width / (1.0 * height / pic_height * pic_width);
 
-            projection(-r, r, 1, -1, matriex);
+            projection(-r, r, 1, -1, projectM);
         }
     }
+    init(matriex);
+
+    //矩阵相乘
+    quareMult(rotateM,projectM,matriex);
 
 }
 
@@ -275,20 +287,20 @@ void OpenGLYUVFilter::onDestory() {
   if(vbo>0){
        glDeleteBuffers(1, &vbo);
    }
-     /* if(fbo>0){
+      if(fbo>0){
           glDeleteBuffers(1,&fbo);
-      }*/
+      }
     if (textureIds[0] > 0)
         glDeleteTextures(3, textureIds);
 
-   /* if(fboTextureId>0){
+    if(fboTextureId>0){
        glDeleteTextures(1,&fboTextureId);
-    }*/
-    /*if(openGlFbo){
+    }
+    if(openGlFbo){
         openGlFbo->onDestory();
         delete openGlFbo;
         openGlFbo=NULL;
-    }*/
+    }
 
     if (program > 0) {
         glDetachShader(program, vertexShader);

@@ -2,6 +2,7 @@ package com.liuxin.audioplay;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -52,6 +53,7 @@ public class LxSurfaceView extends SurfaceView implements SurfaceHolder.Callback
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
         if(lxPlayer != null)
         {
+
             lxPlayer.destorySurface();
         }
     }

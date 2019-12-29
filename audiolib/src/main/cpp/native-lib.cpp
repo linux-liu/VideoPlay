@@ -244,6 +244,13 @@ Java_com_liuxin_audiolib_LXPlayer_setSurface(JNIEnv *env, jobject thiz, jobject 
         openGlHelper->onCreate(env, surface);
     }
 
+    if (lxfFmpeg != NULL) {
+        lxfFmpeg->setOpenGLHelper(openGlHelper);
+        if (lxfFmpeg->video != NULL) {
+            lxfFmpeg->video->setOpenGLHelper(openGlHelper);
+        }
+    }
+
 
 }
 
@@ -263,6 +270,14 @@ Java_com_liuxin_audiolib_LXPlayer_setSurfaceChange(JNIEnv *env, jobject thiz, ji
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liuxin_audiolib_LXPlayer_destorySurface(JNIEnv *env, jobject thiz) {
+
+    if (lxfFmpeg != NULL) {
+        lxfFmpeg->setOpenGLHelper(NULL);
+        if (lxfFmpeg->video != NULL) {
+            lxfFmpeg->video->setOpenGLHelper(NULL);
+        }
+        lxfFmpeg->pause();
+    }
     if (openGlHelper != NULL) {
         openGlHelper->onDestroySurface();
         openGlHelper = NULL;
@@ -273,10 +288,10 @@ Java_com_liuxin_audiolib_LXPlayer_destorySurface(JNIEnv *env, jobject thiz) {
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_liuxin_audiolib_LXPlayer_setYUVData(JNIEnv *env, jobject thiz, jbyteArray yuvdata,
-                                             jint pic_width, jint pic_height,jint formattype) {
+                                             jint pic_width, jint pic_height, jint formattype) {
 
 
-    if (openGlHelper != NULL&&yuvdata!=NULL) {
+    if (openGlHelper != NULL && yuvdata != NULL) {
 
 
         jbyte *yuvdata_ = env->GetByteArrayElements(yuvdata, NULL);
@@ -286,19 +301,19 @@ Java_com_liuxin_audiolib_LXPlayer_setYUVData(JNIEnv *env, jobject thiz, jbyteArr
         jbyte *u = static_cast<jbyte *>(malloc(pic_width * pic_height / 4));
         jbyte *v = static_cast<jbyte *>(malloc(pic_width * pic_height / 4));
 
-        if(formattype==1){
+        if (formattype == 1) {
             //yuv nv12 yyyyy uv uv
             memcpy(y, yuvdata_, pic_width * pic_height);
 
-            jbyte  *currentP=yuvdata_+(pic_width*pic_height);
+            jbyte *currentP = yuvdata_ + (pic_width * pic_height);
 
-            int i=0;
-            for(i;i<pic_width*pic_height/4;i++,currentP++){
-                u[i]=currentP[i];
-                v[i]=currentP[i+1];
+            int i = 0;
+            for (i; i < pic_width * pic_height / 4; i++, currentP++) {
+                u[i] = currentP[i];
+                v[i] = currentP[i + 1];
             }
 
-        } else{
+        } else {
             //yuv420p yyyy u v
             memcpy(y, yuvdata_, pic_width * pic_height);
             memcpy(u, yuvdata_ + (pic_width * pic_height), pic_width * pic_height / 4);
@@ -310,12 +325,12 @@ Java_com_liuxin_audiolib_LXPlayer_setYUVData(JNIEnv *env, jobject thiz, jbyteArr
 
         env->ReleaseByteArrayElements(yuvdata, yuvdata_, JNI_FALSE);
 
-         free(y);
-         free(u);
-         free(v);
-         y=NULL;
-         u=NULL;
-         v=NULL;
+        free(y);
+        free(u);
+        free(v);
+        y = NULL;
+        u = NULL;
+        v = NULL;
 
     }
 }

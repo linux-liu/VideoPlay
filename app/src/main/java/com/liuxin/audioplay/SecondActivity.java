@@ -158,4 +158,19 @@ public class SecondActivity extends AppCompatActivity {
         duration = 0;
         lxPlayer.releaseGlobal();
     }
+
+    @Override
+    protected void onDestroy() {
+        Log.e("lx","onDestory");
+        lxPlayer.releaseGlobal();
+        super.onDestroy();
+    }
+
+    public void pause(View view) {
+        lxPlayer.pause();
+    }
+
+    public void play(View view) {
+        lxPlayer.play();
+    }
 }

@@ -232,9 +232,9 @@ void LXFFmpeg::start() {
 
     const char *codecName = video->codecContext->codec->name;
 
-    isSupportHardCodec=callJava->isSupportHardCode(MainThread,codecName);
-     ALOGD("isSupportHardCodec==>%d",isSupportHardCodec);
-     if (isSupportHardCodec) {
+    isSupportHardCodec = callJava->isSupportHardCode(MainThread, codecName);
+    ALOGD("isSupportHardCodec==>%d", isSupportHardCodec);
+    if (isSupportHardCodec) {
         ALOGD("相等");
         if (strcasecmp(codecName, "h264") == 0) {
             ALOGD("h264");
@@ -248,7 +248,6 @@ void LXFFmpeg::start() {
             isSupportHardCodec = false;
             goto end;
         }
-
 
 
         if (av_bsf_alloc(bitStreamFilter, &video->avbsfContext) != 0) {
@@ -404,11 +403,18 @@ void LXFFmpeg::play() {
     if (audio != NULL) {
         audio->play();
     }
+    if (video != NULL) {
+        video->play();
+    }
 }
 
 void LXFFmpeg::pause() {
     if (audio != NULL) {
         audio->pause();
+
+    }
+    if (video != NULL) {
+        video->pause();
     }
 }
 

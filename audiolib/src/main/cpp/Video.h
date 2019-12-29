@@ -46,6 +46,8 @@ public:
 
     OpenGLHelper *openGlHelper=NULL;
 
+    bool  isPause= false;
+
 
 
 
@@ -59,7 +61,10 @@ public:
 
     double getDelayTime(double diff);
     void start();
+
+    void pause();
     void release();
+    void  play();
     ~Video();
 };
 

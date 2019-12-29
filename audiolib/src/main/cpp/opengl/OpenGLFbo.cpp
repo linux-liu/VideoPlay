@@ -59,6 +59,7 @@ void OpenGLFbo::onCreate() {
 void OpenGLFbo::onChange(int width, int height) {
     this->width=width;
     this->height=height;
+    glViewport(0, 0, width, height);
 }
 
 void OpenGLFbo::onDraw() {
@@ -71,7 +72,7 @@ void OpenGLFbo::onDraw() {
 
 
     //重新绑定
-    glBindTexture(GL_TEXTURE_2D,textureId);
+
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     //反射使参数可用
     glEnableVertexAttribArray(vPosition);
@@ -80,6 +81,11 @@ void OpenGLFbo::onDraw() {
     glEnableVertexAttribArray(fPosition);
     glVertexAttribPointer(fPosition, 2, GL_FLOAT, false, 8,
                           reinterpret_cast<const void *>(vertexSize));
+
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D,textureId);
+    glUniform1i(sTexture,0);
 
 
     glDrawArrays(GL_TRIANGLE_STRIP,0,4);

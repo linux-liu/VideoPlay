@@ -25,12 +25,19 @@ static void *decode_thread_call_back(void *data) {
             usleep(1000 * 100);
             continue;
         }
+
+        if (video->isPause) {
+            usleep(1000 * 100);
+            continue;
+        }
         if (video->avPacketQuene->getSize() == 0) {
             video->callJava->onLoad(ChildThread, true);
 
             usleep(1000 * 100);
             continue;
         }
+
+
         video->callJava->onLoad(ChildThread, false);
         AVPacket *avPacket = av_packet_alloc();
         if (video->avPacketQuene->pullQueue(avPacket) != 0) {
@@ -294,8 +301,18 @@ double Video::getDelayTime(double diff) {
 
 }
 
-void Video::setOpenGLHelper(OpenGLHelper* helper) {
+void Video::setOpenGLHelper(OpenGLHelper *helper) {
     this->openGlHelper = helper;
+}
+
+void Video::pause() {
+    isPause = true;
+
+}
+
+void Video::play() {
+    isPause= false;
+
 }
 
 
