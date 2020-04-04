@@ -1,7 +1,5 @@
 package com.liuxin.audioplay;
 
-import android.opengl.GLES20;
-import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -11,14 +9,14 @@ import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.liuxin.audiolib.LXPlayer;
-import com.liuxin.audiolib.OnCompleteListener;
-import com.liuxin.audiolib.OnDBListener;
-import com.liuxin.audiolib.OnErrorListener;
-import com.liuxin.audiolib.OnLoadListener;
-import com.liuxin.audiolib.OnPlayStatusListener;
-import com.liuxin.audiolib.OnPrepareListener;
-import com.liuxin.audiolib.OnProgressListener;
+import com.liuxin.videolib.LXPlayer;
+import com.liuxin.videolib.OnCompleteListener;
+import com.liuxin.videolib.OnDBListener;
+import com.liuxin.videolib.OnErrorListener;
+import com.liuxin.videolib.OnLoadListener;
+import com.liuxin.videolib.OnPlayStatusListener;
+import com.liuxin.videolib.OnPrepareListener;
+import com.liuxin.videolib.OnProgressListener;
 
 public class SecondActivity extends AppCompatActivity {
     private LXPlayer lxPlayer;
@@ -148,7 +146,11 @@ public class SecondActivity extends AppCompatActivity {
     }
 
     public void start(View view) {
-   lxPlayer.prepare(Environment.getExternalStorageDirectory() + "/Test.mp4");
+        //有问题的地址
+        //"http://media.w3.org/2010/05/sintel/trailer.mp4"
+        //"http://mirror.aarnet.edu.au/pub/TED-talks/911Mothers_2010W-480p.mp4"
+       // Log.e("lx",Environment.getExternalStorageDirectory().getAbsolutePath()+"/Test2.mp4");
+   lxPlayer.prepare("http://mirror.aarnet.edu.au/pub/TED-talks/911Mothers_2010W-480p.mp4");
 
 
 

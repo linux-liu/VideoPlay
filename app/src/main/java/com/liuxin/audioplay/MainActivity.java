@@ -3,7 +3,6 @@ package com.liuxin.audioplay;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
@@ -14,14 +13,14 @@ import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.liuxin.audiolib.LXPlayer;
-import com.liuxin.audiolib.OnCompleteListener;
-import com.liuxin.audiolib.OnDBListener;
-import com.liuxin.audiolib.OnErrorListener;
-import com.liuxin.audiolib.OnLoadListener;
-import com.liuxin.audiolib.OnPlayStatusListener;
-import com.liuxin.audiolib.OnPrepareListener;
-import com.liuxin.audiolib.OnProgressListener;
+import com.liuxin.videolib.LXPlayer;
+import com.liuxin.videolib.OnCompleteListener;
+import com.liuxin.videolib.OnDBListener;
+import com.liuxin.videolib.OnErrorListener;
+import com.liuxin.videolib.OnLoadListener;
+import com.liuxin.videolib.OnPlayStatusListener;
+import com.liuxin.videolib.OnPrepareListener;
+import com.liuxin.videolib.OnProgressListener;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -213,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         ByteBuffer.allocate(10).order(ByteOrder.nativeOrder());
-      lxPlayer.prepare("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4");
+      lxPlayer.prepare("http://vfx.mtime.cn/Video/2019/03/21/mp4/190321153853126488.mp4");
        //lxPlayer.prepare("http://m10.music.126.net/20190907172509/5916d1c884ee670055a9de827caec36d/ymusic/45e9/a753/473c/6117d81068fe516650edec30f8b1be0b.mp3");
       //lxPlayer.prepare( Environment.getExternalStorageDirectory() + "/testv/1077205091002.dat");
     }

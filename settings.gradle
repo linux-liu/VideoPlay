@@ -1,1 +1,1 @@
-include ':app', ':audiolib'
+include ':app', ':videolib'
